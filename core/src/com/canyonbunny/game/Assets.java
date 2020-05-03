@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.utils.Disposable;
@@ -23,6 +24,7 @@ public class Assets implements Disposable, AssetErrorListener {
     public AssetGoldCoin goldCoin;
     public AssetFeather feather;
     public AssetLevelDecoration levelDecoration;
+    public AssetFonts fonts;
 
     public Assets(){}
 
@@ -58,6 +60,7 @@ public class Assets implements Disposable, AssetErrorListener {
         goldCoin = new AssetGoldCoin(atlas);
         feather = new AssetFeather(atlas);
         levelDecoration = new AssetLevelDecoration(atlas);
+        fonts = new AssetFonts();
     }
 
     @Override
@@ -76,7 +79,7 @@ public class Assets implements Disposable, AssetErrorListener {
      *
      * */
 
-    public class AssetBunny{
+    public static class AssetBunny{
         public final AtlasRegion head;
 
         public AssetBunny(TextureAtlas atlas){
@@ -84,7 +87,7 @@ public class Assets implements Disposable, AssetErrorListener {
         }
     }
 
-    public class AssetRock{
+    public static class AssetRock{
         public final AtlasRegion edge;
         public final AtlasRegion middle;
 
@@ -94,7 +97,7 @@ public class Assets implements Disposable, AssetErrorListener {
         }
     }
 
-    public class AssetGoldCoin{
+    public static class AssetGoldCoin{
         public final AtlasRegion goldCoin;
 
         public AssetGoldCoin(TextureAtlas atlas){
@@ -102,7 +105,7 @@ public class Assets implements Disposable, AssetErrorListener {
         }
     }
 
-    public class AssetFeather{
+    public static class AssetFeather{
         public final AtlasRegion feather;
 
         public AssetFeather(TextureAtlas atlas){
@@ -110,7 +113,7 @@ public class Assets implements Disposable, AssetErrorListener {
         }
     }
 
-    public class AssetLevelDecoration {
+    public static class AssetLevelDecoration {
         public final AtlasRegion cloud01;
         public final AtlasRegion cloud02;
         public final AtlasRegion cloud03;
@@ -125,6 +128,29 @@ public class Assets implements Disposable, AssetErrorListener {
             mountainLeft = atlas.findRegion("mountain_left");
             mountainRight = atlas.findRegion("mountain_right");
             waterOverlay = atlas.findRegion("water_overlay");
+        }
+    }
+
+    public static class AssetFonts {
+        public final BitmapFont defaultSmall;
+        public final BitmapFont defaultNormal;
+        public final BitmapFont defaultBig;
+
+        public AssetFonts () {
+            // create three fonts using Libgdx's 15px bitmap font
+            defaultSmall = new BitmapFont(Gdx.files.internal("images/arial-15.fnt"), true);
+            defaultNormal = new BitmapFont(Gdx.files.internal("images/arial-15.fnt"), true);
+            defaultBig = new BitmapFont( Gdx.files.internal("images/arial-15.fnt"), true);
+
+            // set font sizes
+            defaultSmall.getData().setScale(0.75f);
+            defaultNormal.getData().setScale(1.0f);
+            defaultBig.getData().setScale(2.0f);
+
+            // enable linear texture filtering for smooth fonts
+            defaultSmall.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+            defaultNormal.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+            defaultBig.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
         }
     }
 }

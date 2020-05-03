@@ -9,7 +9,7 @@ import com.canyonbunny.CanyonBunny;
 public class DesktopLauncher {
 
 	public static void main (String[] arg) {
-		boolean rebuildAtlas = true;
+		boolean rebuildAtlas = false;
 
 		if (rebuildAtlas) {
 			Settings settings = new Settings();

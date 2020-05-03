@@ -6,7 +6,10 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import com.canyonbunny.game.Assets;
 import com.canyonbunny.utils.CameraHelper;
 
 public class WorldController {
@@ -32,14 +35,13 @@ public class WorldController {
     private void initObjects() {
         sprites = new Sprite[5];
 
-        int width = 32;
-        int height = 32;
-
-        Pixmap pixmap = createProceduralPixmap(width, height);
-        Texture texture = new Texture(pixmap);
+        Array<TextureRegion> regions = new Array<TextureRegion>();
+        regions.add(Assets.instance.bunny.head);
+        regions.add(Assets.instance.feather.feather);
+        regions.add(Assets.instance.goldCoin.goldCoin);
 
         for (int i = 0; i < sprites.length; i++) {
-            Sprite spr = new Sprite(texture);
+            Sprite spr = new Sprite(regions.random());
             spr.setSize(1, 1);
             spr.setOrigin(spr.getWidth() / 2.0f, spr.getHeight() / 2.0f);
 
@@ -90,14 +92,14 @@ public class WorldController {
 
         // Selected Sprite Controls
         float sprMoveSpeed = 5 * deltaTime;
-        if (Gdx.input.isKeyPressed(Keys.A)) moveSelectedSprite(
-                -sprMoveSpeed, 0);
-        if (Gdx.input.isKeyPressed(Keys.D))
-            moveSelectedSprite(sprMoveSpeed, 0);
-        if (Gdx.input.isKeyPressed(Keys.W)) moveSelectedSprite(0,
-                sprMoveSpeed);
-        if (Gdx.input.isKeyPressed(Keys.S)) moveSelectedSprite(0,
-                -sprMoveSpeed);
+
+        if (Gdx.input.isKeyPressed(Keys.A)) moveSelectedSprite(-sprMoveSpeed, 0);
+
+        if (Gdx.input.isKeyPressed(Keys.D)) moveSelectedSprite(sprMoveSpeed, 0);
+
+        if (Gdx.input.isKeyPressed(Keys.W)) moveSelectedSprite(0, sprMoveSpeed);
+
+        if (Gdx.input.isKeyPressed(Keys.S)) moveSelectedSprite(0, -sprMoveSpeed);
 
         if (Gdx.input.isKeyJustPressed(Keys.SPACE)){
             selectedSprite = (selectedSprite + 1) % sprites.length;

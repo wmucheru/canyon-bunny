@@ -3,12 +3,14 @@ package com.canyonbunny;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.canyonbunny.game.Assets;
 
 public class CanyonBunny extends ApplicationAdapter {
 	public static final String TAG = CanyonBunny.class.getName();
@@ -22,6 +24,9 @@ public class CanyonBunny extends ApplicationAdapter {
 	public void create () {
 		// TODO: Remove on publish
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+		// Load assets
+		Assets.instance.init(new AssetManager());
 
 		worldController = new WorldController();
 		worldRenderer = new WorldRenderer(worldController);
@@ -60,5 +65,6 @@ public class CanyonBunny extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		worldRenderer.dispose();
+		Assets.instance.dispose();
 	}
 }

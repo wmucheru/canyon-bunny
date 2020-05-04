@@ -39,13 +39,23 @@ public class Level {
     public Mountains mountains;
     public WaterOverlay waterOverlay;
 
+    // actors
+    public BunnyHead bunnyHead;
+    public Array<GoldCoin> goldcoins;
+    public Array<Feather> feathers;
+
     public Level (String filename) {
         init(filename);
     }
 
     private void init (String filename) {
+        // player character
+        bunnyHead = null;
+
         // objects
-        rocks = new Array<Rock>();
+        rocks = new Array<>();
+        goldcoins = new Array<>();
+        feathers = new Array<>();
 
         // load image file that represents the level data
         Pixmap pixmap = new Pixmap(Gdx.files.internal(filename));
@@ -90,16 +100,27 @@ public class Level {
                 }
 
                 // player spawn point
-                else if
-                    (BLOCK_TYPE.PLAYER_SPAWNPOINT.sameColor(currentPixel)) {
+                else if(BLOCK_TYPE.PLAYER_SPAWNPOINT.sameColor(currentPixel)) {
+                    obj = new BunnyHead();
+                    offsetHeight = -3.0f;
+                    obj.position.set(pixelX, baseHeight * obj.dimension.y + offsetHeight);
+                    bunnyHead = (BunnyHead) obj;
                 }
 
                 // feather
                 else if (BLOCK_TYPE.ITEM_FEATHER.sameColor(currentPixel)) {
+                    obj = new Feather();
+                    offsetHeight = -1.5f;
+                    obj.position.set(pixelX,baseHeight * obj.dimension.y + offsetHeight);
+                    feathers.add((Feather)obj);
                 }
 
                 // gold coin
                 else if (BLOCK_TYPE.ITEM_GOLD_COIN.sameColor(currentPixel)) {
+                    obj = new GoldCoin();
+                    offsetHeight = -1.5f;
+                    obj.position.set(pixelX,baseHeight * obj.dimension.y + offsetHeight);
+                    goldcoins.add((GoldCoin)obj);
                 }
 
                 // unknown object/pixel color
@@ -108,6 +129,7 @@ public class Level {
                     int g = 0xff & (currentPixel >>> 16); //green color channel
                     int b = 0xff & (currentPixel >>> 8); //blue color channel
                     int a = 0xff & currentPixel; //alpha channel
+
                     Gdx.app.error(TAG, "Unknown object at x<" + pixelX + "> y<"
                             + pixelY + ">: r<" + r+ "> g<" + g + "> b<" + b + "> a<" + a + ">");
                 }
@@ -136,10 +158,36 @@ public class Level {
         for (Rock rock : rocks)
             rock.render(batch);
 
+        // Draw Gold Coins
+        for (GoldCoin goldCoin : goldcoins)
+            goldCoin.render(batch);
+
+        // Draw Feathers
+        for (Feather feather : feathers)
+            feather.render(batch);
+
+        // Draw Player Character
+        bunnyHead.render(batch);
+
         // Draw Water Overlay
         waterOverlay.render(batch);
 
         // Draw Clouds
         clouds.render(batch);
+    }
+
+    public void update(float deltaTime){
+        bunnyHead.update(deltaTime);
+
+        for(Rock rock : rocks)
+            rock.update(deltaTime);
+
+        for(GoldCoin goldCoin : goldcoins)
+            goldCoin.update(deltaTime);
+
+        for(Feather feather : feathers)
+            feather.update(deltaTime);
+
+        clouds.update(deltaTime);
     }
 }

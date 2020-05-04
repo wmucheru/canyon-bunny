@@ -3,6 +3,7 @@ package com.canyonbunny;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Rectangle;
 import com.canyonbunny.game.objects.BunnyHead;
 import com.canyonbunny.game.objects.Feather;
@@ -12,7 +13,7 @@ import com.canyonbunny.game.objects.Rock;
 import com.canyonbunny.utils.CameraHelper;
 import com.canyonbunny.utils.Constants;
 
-public class WorldController {
+public class WorldController extends InputAdapter {
     public static final String TAG = WorldController.class.getName();
 
     public CameraHelper cameraHelper;
@@ -20,6 +21,8 @@ public class WorldController {
     public Level level;
     public int lives;
     public int score;
+
+    private float timeLeftGameOverDelay;
 
     // Rectangles for collision detection
     private Rectangle r1 = new Rectangle();
@@ -30,8 +33,10 @@ public class WorldController {
     }
 
     private void init(){
+        Gdx.input.setInputProcessor(this);
         cameraHelper = new CameraHelper();
         lives = Constants.LIVES_START;
+        timeLeftGameOverDelay = 0;
 
         initLevel();
     }
@@ -42,11 +47,34 @@ public class WorldController {
         cameraHelper.setTarget(level.bunnyHead);
     }
 
+    public boolean isGameOver () {
+        return lives < 0;
+    }
+    public boolean isPlayerInWater () {
+        return level.bunnyHead.position.y < -5;
+    }
+
     public void update(float deltaTime){
         handleDebugInput(deltaTime);
+
+        if (isGameOver()) {
+            timeLeftGameOverDelay -= deltaTime;
+            if (timeLeftGameOverDelay < 0) init();
+        } else {
+            handleInputGame(deltaTime);
+        }
+
         level.update(deltaTime);
         testCollisions();
         cameraHelper.update(deltaTime);
+
+        if (!isGameOver() && isPlayerInWater()) {
+            lives--;
+            if (isGameOver())
+                timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
+            else
+                initLevel();
+        }
     }
 
     private void handleDebugInput(float deltaTime){
@@ -76,6 +104,52 @@ public class WorldController {
             if (Gdx.input.isKeyPressed(Keys.BACKSPACE))
                 cameraHelper.setPosition(0, 0);
         }
+    }
+
+    private void handleInputGame (float deltaTime) {
+        if (cameraHelper.hasTarget(level.bunnyHead)) {
+
+            // Player Movement
+            if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+                level.bunnyHead.velocity.x =
+                        -level.bunnyHead.terminalVelocity.x;
+            } else if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+                level.bunnyHead.velocity.x =
+                        level.bunnyHead.terminalVelocity.x;
+            } else {
+                // Execute auto-forward movement on non-desktop platform
+                if (Gdx.app.getType() != ApplicationType.Desktop) {
+                    level.bunnyHead.velocity.x =
+                            level.bunnyHead.terminalVelocity.x;
+                }
+            }
+
+            // Bunny Jump
+            if (Gdx.input.isTouched() ||
+                    Gdx.input.isKeyPressed(Keys.SPACE)) {
+                level.bunnyHead.setJumping(true);
+            } else {
+                level.bunnyHead.setJumping(false);
+            }
+        }
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        // Reset game world
+        if (keycode == Keys.R) {
+            init();
+            Gdx.app.debug(TAG, "Game world resetted");
+        }
+
+        // Toggle camera follow
+        else if (keycode == Keys.ENTER) {
+            cameraHelper.setTarget(cameraHelper.hasTarget()
+                    ? null: level.bunnyHead);
+            Gdx.app.debug(TAG, "Camera follow enabled: "
+                    + cameraHelper.hasTarget());
+        }
+        return false;
     }
 
     private void onCollisionBunnyHeadWithRock(Rock rock){

@@ -104,6 +104,7 @@ public class Level {
                     obj = new BunnyHead();
                     offsetHeight = -3.0f;
                     obj.position.set(pixelX, baseHeight * obj.dimension.y + offsetHeight);
+
                     bunnyHead = (BunnyHead) obj;
                 }
 
@@ -112,6 +113,7 @@ public class Level {
                     obj = new Feather();
                     offsetHeight = -1.5f;
                     obj.position.set(pixelX,baseHeight * obj.dimension.y + offsetHeight);
+
                     feathers.add((Feather)obj);
                 }
 
@@ -120,6 +122,7 @@ public class Level {
                     obj = new GoldCoin();
                     offsetHeight = -1.5f;
                     obj.position.set(pixelX,baseHeight * obj.dimension.y + offsetHeight);
+
                     goldcoins.add((GoldCoin)obj);
                 }
 

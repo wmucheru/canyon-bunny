@@ -38,7 +38,7 @@ public abstract class AbstractGameObject {
         updateMotionY(deltaTime);
 
         // Move to new position
-        position.x += velocity.x * deltaTime;
+        position.x += velocity.x * deltaTime * 2;
         position.y += velocity.y * deltaTime;
     }
 

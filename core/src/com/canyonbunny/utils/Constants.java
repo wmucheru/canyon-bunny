@@ -8,7 +8,17 @@ public class Constants {
     public static final float VIEWPORT_HEIGHT = 5.0f;
 
     // Location of description file for texture atlas
-    public static final String TEXTURE_ATLAS_OBJECTS = "images/canyon_bunny.pack.atlas";
+    public static final String TEXTURE_ATLAS_OBJECTS = "images/canyon_bunny.atlas";
+
+    public static final String TEXTURE_ATLAS_UI = "images/canyon_bunny_ui.atlas";
+    public static final String TEXTURE_ATLAS_LIBGDX_UI = "images/uiskin.atlas";
+
+    // Location of description file for skins
+    public static final String SKIN_LIBGDX_UI = "images/uiskin.json";
+    public static final String SKIN_CANYONBUNNY_UI = "images/canyonbunny-ui.json";
+
+    // Preferences
+    public static final String PREFERENCES = "prefs";
 
     // GUI Width
     public static final float VIEWPORT_GUI_WIDTH = 800.0f;

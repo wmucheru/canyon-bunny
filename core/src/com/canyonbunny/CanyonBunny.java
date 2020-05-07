@@ -2,6 +2,7 @@ package com.canyonbunny;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,8 +12,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.canyonbunny.game.Assets;
+import com.canyonbunny.screens.MenuScreen;
 
-public class CanyonBunny extends ApplicationAdapter {
+public class CanyonBunny extends Game {
 	public static final String TAG = CanyonBunny.class.getName();
 
 	private WorldController worldController;
@@ -28,43 +30,7 @@ public class CanyonBunny extends ApplicationAdapter {
 		// Load assets
 		Assets.instance.init(new AssetManager());
 
-		worldController = new WorldController();
-		worldRenderer = new WorldRenderer(worldController);
-
-		paused = false;
-	}
-
-	@Override
-	public void render () {
-		// Update only if game is not paused
-		if(!paused){
-			worldController.update(Gdx.graphics.getDeltaTime());
-		}
-
-		Gdx.gl.glClearColor(0, 50, 50, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		worldRenderer.render();
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		worldRenderer.resize(width, height);
-	}
-
-	@Override
-	public void pause() {
-		paused = true;
-	}
-
-	@Override
-	public void resume() {
-		paused = false;
-	}
-
-	@Override
-	public void dispose () {
-		worldRenderer.dispose();
-		Assets.instance.dispose();
+		// Start game at menu screen
+		setScreen(new MenuScreen(this));
 	}
 }

@@ -9,19 +9,26 @@ import com.canyonbunny.CanyonBunny;
 public class DesktopLauncher {
 
 	public static void main (String[] arg) {
-		boolean rebuildAtlas = false;
+		boolean rebuildAtlas = true;
 
 		if (rebuildAtlas) {
 			Settings settings = new Settings();
 			settings.maxWidth = 1024;
 			settings.maxHeight = 1024;
 			settings.duplicatePadding = false;
-			settings.debug = true;
-			TexturePacker.process(
-					settings,
+			settings.debug = false;
+
+			// Game assets
+			TexturePacker.process(settings,
 					"desktop/assets-raw/images",
 					"android/assets/images",
-			"canyon_bunny.pack");
+			"canyon_bunny.atlas");
+
+			// UI assets
+			TexturePacker.process(settings,
+					"desktop/assets-raw/images-ui",
+					"android/assets/images",
+					"canyon_bunny_ui.atlas");
 		}
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

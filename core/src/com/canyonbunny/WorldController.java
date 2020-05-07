@@ -1,6 +1,7 @@
 package com.canyonbunny;
 
 import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
@@ -10,11 +11,14 @@ import com.canyonbunny.game.objects.Feather;
 import com.canyonbunny.game.objects.GoldCoin;
 import com.canyonbunny.game.objects.Level;
 import com.canyonbunny.game.objects.Rock;
+import com.canyonbunny.screens.MenuScreen;
 import com.canyonbunny.utils.CameraHelper;
 import com.canyonbunny.utils.Constants;
 
 public class WorldController extends InputAdapter {
     public static final String TAG = WorldController.class.getName();
+
+    private Game game;
 
     public CameraHelper cameraHelper;
 
@@ -28,7 +32,8 @@ public class WorldController extends InputAdapter {
     private Rectangle r1 = new Rectangle();
     private Rectangle r2 = new Rectangle();
 
-    public WorldController() {
+    public WorldController(Game game) {
+        this.game = game;
         init();
     }
 
@@ -47,9 +52,14 @@ public class WorldController extends InputAdapter {
         cameraHelper.setTarget(level.bunnyHead);
     }
 
+    private void backToMenu(){
+        game.setScreen(new MenuScreen(game));
+    }
+
     public boolean isGameOver () {
         return lives < 0;
     }
+
     public boolean isPlayerInWater () {
         return level.bunnyHead.position.y < -5;
     }
@@ -59,7 +69,7 @@ public class WorldController extends InputAdapter {
 
         if (isGameOver()) {
             timeLeftGameOverDelay -= deltaTime;
-            if (timeLeftGameOverDelay < 0) init();
+            if (timeLeftGameOverDelay < 0) backToMenu();
         } else {
             handleInputGame(deltaTime);
         }
@@ -110,45 +120,49 @@ public class WorldController extends InputAdapter {
         if (cameraHelper.hasTarget(level.bunnyHead)) {
 
             // Player Movement
-            if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-                level.bunnyHead.velocity.x =
-                        -level.bunnyHead.terminalVelocity.x;
-            } else if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+            if (Gdx.input.isKeyPressed(Keys.LEFT)){
+                level.bunnyHead.velocity.x = -level.bunnyHead.terminalVelocity.x;
+            }
+            else if (Gdx.input.isKeyPressed(Keys.RIGHT)){
                 level.bunnyHead.velocity.x =
                         level.bunnyHead.terminalVelocity.x;
-            } else {
+            }
+            else{
                 // Execute auto-forward movement on non-desktop platform
                 if (Gdx.app.getType() != ApplicationType.Desktop) {
-                    level.bunnyHead.velocity.x =
-                            level.bunnyHead.terminalVelocity.x;
+                    level.bunnyHead.velocity.x = level.bunnyHead.terminalVelocity.x;
                 }
             }
 
             // Bunny Jump
-            if (Gdx.input.isTouched() ||
-                    Gdx.input.isKeyPressed(Keys.SPACE)) {
+            if (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Keys.UP)){
                 level.bunnyHead.setJumping(true);
-            } else {
+            }
+            else{
                 level.bunnyHead.setJumping(false);
             }
         }
     }
 
     @Override
-    public boolean keyUp(int keycode) {
+    public boolean keyUp(int keyCode) {
         // Reset game world
-        if (keycode == Keys.R) {
+        if (keyCode == Keys.R) {
             init();
             Gdx.app.debug(TAG, "Game world resetted");
         }
 
         // Toggle camera follow
-        else if (keycode == Keys.ENTER) {
-            cameraHelper.setTarget(cameraHelper.hasTarget()
-                    ? null: level.bunnyHead);
-            Gdx.app.debug(TAG, "Camera follow enabled: "
-                    + cameraHelper.hasTarget());
+        else if (keyCode == Keys.ENTER) {
+            cameraHelper.setTarget(cameraHelper.hasTarget() ? null: level.bunnyHead);
+            Gdx.app.debug(TAG, "Camera follow enabled: " + cameraHelper.hasTarget());
         }
+
+        // Back to Menu
+        else if(keyCode == Keys.ESCAPE || keyCode == Keys.BACK){
+            backToMenu();
+        }
+
         return false;
     }
 

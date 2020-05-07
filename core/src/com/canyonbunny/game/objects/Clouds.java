@@ -47,7 +47,7 @@ public class Clouds extends AbstractGameObject {
 
     private void init () {
         dimension.set(3.0f, 1.5f);
-        regClouds = new Array<TextureRegion>();
+        regClouds = new Array<>();
         regClouds.add(Assets.instance.levelDecoration.cloud01);
         regClouds.add(Assets.instance.levelDecoration.cloud02);
         regClouds.add(Assets.instance.levelDecoration.cloud03);
@@ -55,11 +55,11 @@ public class Clouds extends AbstractGameObject {
         int distFac = 5;
         int numClouds = (int)(length / distFac);
 
-        clouds = new Array<Cloud>(2 * numClouds);
+        clouds = new Array<>(2 * numClouds);
 
         for (int i = 0; i < numClouds; i++) {
             Cloud cloud = spawnCloud();
-            cloud.position.x = i * distFac;
+            cloud.position.x = i * distFac; // move left
             clouds.add(cloud);
         }
     }
@@ -76,14 +76,41 @@ public class Clouds extends AbstractGameObject {
         pos.x = length + 10; // position after end of level
         pos.y += 1.75; // base position
         pos.y += MathUtils.random(0.0f, 0.2f) * (MathUtils.randomBoolean() ? 1 : -1); // random additional position
+
+        // speed
+        Vector2 speed = new Vector2();
+        speed.x += 0.5f; // base speed
+
+        // random additional speed
+        speed.x += MathUtils.random(0.0f, 0.75f);
+        cloud.terminalVelocity.set(speed);
+        speed.x *= -1; // move left
+        cloud.velocity.set(speed);
+
         cloud.position.set(pos);
 
         return cloud;
     }
 
     @Override
+    public void update(float deltaTime) {
+        for (int i = clouds.size - 1; i>= 0; i--) {
+            Cloud cloud = clouds.get(i);
+            cloud.update(deltaTime);
+
+            if (cloud.position.x< -10) {
+                // cloud moved outside of world.
+                // destroy and spawn new cloud at end of level.
+                clouds.removeIndex(i);
+                clouds.add(spawnCloud());
+            }
+        }
+    }
+
+    @Override
     public void render (SpriteBatch batch) {
-        for (Cloud cloud : clouds)
+        for (Cloud cloud : clouds){
             cloud.render(batch);
+        }
     }
 }

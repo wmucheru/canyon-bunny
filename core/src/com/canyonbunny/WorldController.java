@@ -65,7 +65,6 @@ public class WorldController extends InputAdapter {
     }
 
     public void update(float deltaTime){
-        handleDebugInput(deltaTime);
 
         if (isGameOver()) {
             timeLeftGameOverDelay -= deltaTime;
@@ -84,35 +83,6 @@ public class WorldController extends InputAdapter {
                 timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
             else
                 initLevel();
-        }
-    }
-
-    private void handleDebugInput(float deltaTime){
-        if (Gdx.app.getType() != ApplicationType.Desktop) return;
-
-        if (!cameraHelper.hasTarget(level.bunnyHead)) {
-
-            // Camera Controls (move)
-            float camMoveSpeed = 5 * deltaTime;
-            float camMoveSpeedAccelerationFactor = 5;
-
-            if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT))
-                camMoveSpeed *= camMoveSpeedAccelerationFactor;
-
-//            if (Gdx.input.isKeyPressed(Keys.LEFT))
-//                moveCamera(-camMoveSpeed, 0);
-//
-//            if (Gdx.input.isKeyPressed(Keys.RIGHT))
-//                moveCamera(camMoveSpeed, 0);
-//
-//            if (Gdx.input.isKeyPressed(Keys.UP))
-//                moveCamera(0, camMoveSpeed);
-//
-//            if (Gdx.input.isKeyPressed(Keys.DOWN))
-//                moveCamera(0, -camMoveSpeed);
-
-            if (Gdx.input.isKeyPressed(Keys.BACKSPACE))
-                cameraHelper.setPosition(0, 0);
         }
     }
 

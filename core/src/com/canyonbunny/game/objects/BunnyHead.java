@@ -1,5 +1,7 @@
 package com.canyonbunny.game.objects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.canyonbunny.CharacterSkin;
@@ -31,6 +33,8 @@ public class BunnyHead extends AbstractGameObject {
     public boolean hasFeatherPowerup;
     public float timeLeftFeatherPowerup;
 
+    ParticleEffect dustParticles = new ParticleEffect();
+
     public BunnyHead () {
         init();
     }
@@ -60,6 +64,10 @@ public class BunnyHead extends AbstractGameObject {
         // Power-ups
         hasFeatherPowerup = false;
         timeLeftFeatherPowerup = 0;
+
+        // Particles
+        dustParticles.load(Gdx.files.internal("particles/dust.pfx"),
+                Gdx.files.internal("particles"));
     }
 
     public void setJumping(boolean jumpKeyPressed){
@@ -118,6 +126,8 @@ public class BunnyHead extends AbstractGameObject {
                 setFeatherPowerup(false);
             }
         }
+
+        dustParticles.update(deltaTime);
     }
 
     @Override
@@ -154,13 +164,18 @@ public class BunnyHead extends AbstractGameObject {
                 }
         }
 
-        if (jumpState != JUMP_STATE.GROUNDED)
+        if (jumpState != JUMP_STATE.GROUNDED) {
+            dustParticles.allowCompletion();
             super.updateMotionY(deltaTime);
+        }
     }
 
     @Override
     public void render(SpriteBatch batch) {
         TextureRegion reg = null;
+
+        // Draw particles
+        dustParticles.draw(batch);
 
         // Apply skin color
         batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].getColor());

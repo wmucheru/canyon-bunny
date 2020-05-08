@@ -26,6 +26,7 @@ public class CameraHelper {
     public void update (float deltaTime) {
         if (!hasTarget()) return;
 
+        // Smooth movements
         position.lerp(target.position, FOLLOW_SPEED * deltaTime);
 
         position.x = target.position.x + target.origin.x;

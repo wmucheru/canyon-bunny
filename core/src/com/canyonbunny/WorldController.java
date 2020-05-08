@@ -6,6 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Rectangle;
+import com.canyonbunny.game.Assets;
+import com.canyonbunny.game.AudioManager;
 import com.canyonbunny.game.objects.BunnyHead;
 import com.canyonbunny.game.objects.Feather;
 import com.canyonbunny.game.objects.GoldCoin;
@@ -26,6 +28,9 @@ public class WorldController extends InputAdapter {
     public int lives;
     public int score;
 
+    public float livesVisual;
+    public float scoreVisual;
+
     private float timeLeftGameOverDelay;
 
     // Rectangles for collision detection
@@ -41,6 +46,8 @@ public class WorldController extends InputAdapter {
         Gdx.input.setInputProcessor(this);
         cameraHelper = new CameraHelper();
         lives = Constants.LIVES_START;
+        livesVisual = lives;
+        scoreVisual = score;
         timeLeftGameOverDelay = 0;
 
         initLevel();
@@ -78,11 +85,18 @@ public class WorldController extends InputAdapter {
         cameraHelper.update(deltaTime);
 
         if (!isGameOver() && isPlayerInWater()) {
+            AudioManager.instance.play(Assets.instance.sounds.liveLost);
             lives--;
             if (isGameOver())
                 timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
             else
                 initLevel();
+
+            if (livesVisual> lives)
+                livesVisual = Math.max(lives, livesVisual - 1 * deltaTime);
+
+            if (scoreVisual< score)
+                scoreVisual = Math.min(score, scoreVisual + 250 * deltaTime);
         }
     }
 
@@ -120,12 +134,6 @@ public class WorldController extends InputAdapter {
         if (keyCode == Keys.R) {
             init();
             Gdx.app.debug(TAG, "Game world resetted");
-        }
-
-        // Toggle camera follow
-        else if (keyCode == Keys.ENTER) {
-            cameraHelper.setTarget(cameraHelper.hasTarget() ? null: level.bunnyHead);
-            Gdx.app.debug(TAG, "Camera follow enabled: " + cameraHelper.hasTarget());
         }
 
         // Back to Menu
@@ -169,12 +177,14 @@ public class WorldController extends InputAdapter {
 
     private void onCollisionBunnyWithGoldCoin(GoldCoin goldcoin){
         goldcoin.collected = true;
+        AudioManager.instance.play(Assets.instance.sounds.pickupCoin);
         score += goldcoin.getScore();
         Gdx.app.log(TAG, "Gold coin collected");
     }
 
     private void onCollisionBunnyWithFeather(Feather feather){
         feather.collected = true;
+        AudioManager.instance.play(Assets.instance.sounds.pickupFeather);
         score += feather.getScore();
         level.bunnyHead.setFeatherPowerup(true);
         Gdx.app.log(TAG, "Feather collected");
@@ -198,8 +208,7 @@ public class WorldController extends InputAdapter {
         // Test collision: Bunny Head <-> Gold Coins
         for (GoldCoin goldcoin : level.goldcoins) {
             if (goldcoin.collected) continue;
-            r2.set(goldcoin.position.x, goldcoin.position.y,
-                    goldcoin.bounds.width, goldcoin.bounds.height);
+            r2.set(goldcoin.position.x, goldcoin.position.y, goldcoin.bounds.width, goldcoin.bounds.height);
             if (!r1.overlaps(r2)) continue;
             onCollisionBunnyWithGoldCoin(goldcoin);
             break;

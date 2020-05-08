@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.canyonbunny.CharacterSkin;
 import com.canyonbunny.game.Assets;
+import com.canyonbunny.game.AudioManager;
 import com.canyonbunny.game.GamePreferences;
 import com.canyonbunny.utils.Constants;
 
@@ -104,12 +105,14 @@ public class MenuScreen extends AbstractGameScreen {
     private void onSaveClicked() {
         saveSettings();
         onCancelClicked();
+        AudioManager.instance.onSettingsUpdated();
     }
 
     private void onCancelClicked() {
         btnMenuPlay.setVisible(true);
         btnMenuOptions.setVisible(true);
         winOptions.setVisible(false);
+        AudioManager.instance.onSettingsUpdated();
     }
 
     private void rebuildStage(){

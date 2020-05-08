@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.canyonbunny.game.Assets;
+import com.canyonbunny.game.AudioManager;
+import com.canyonbunny.game.GamePreferences;
 import com.canyonbunny.screens.MenuScreen;
 
 public class CanyonBunny extends Game {
@@ -29,6 +31,10 @@ public class CanyonBunny extends Game {
 
 		// Load assets
 		Assets.instance.init(new AssetManager());
+
+		// Load preferences for audio settings and start playing music
+		GamePreferences.instance.load();
+		AudioManager.instance.play(Assets.instance.music.song01);
 
 		// Start game at menu screen
 		setScreen(new MenuScreen(this));

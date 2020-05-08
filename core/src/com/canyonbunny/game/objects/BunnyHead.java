@@ -4,9 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.canyonbunny.CharacterSkin;
 import com.canyonbunny.game.AbstractGameObject;
 import com.canyonbunny.game.Assets;
+import com.canyonbunny.game.AudioManager;
 import com.canyonbunny.game.GamePreferences;
 import com.canyonbunny.utils.Constants;
 
@@ -33,7 +35,7 @@ public class BunnyHead extends AbstractGameObject {
     public boolean hasFeatherPowerup;
     public float timeLeftFeatherPowerup;
 
-    ParticleEffect dustParticles = new ParticleEffect();
+    public ParticleEffect dustParticles = new ParticleEffect();
 
     public BunnyHead () {
         init();
@@ -75,6 +77,7 @@ public class BunnyHead extends AbstractGameObject {
 
             case GROUNDED: // Character is standing on a platform
                 if (jumpKeyPressed) {
+                    AudioManager.instance.play(Assets.instance.sounds.jump);
 
                     // Start counting jump time from the beginning
                     timeJumping = 0;
@@ -90,6 +93,9 @@ public class BunnyHead extends AbstractGameObject {
             case FALLING:// Falling down
             case JUMP_FALLING: // Falling down after jump
                 if (jumpKeyPressed && hasFeatherPowerup) {
+                    AudioManager.instance.play(Assets.instance.sounds.jumpWithFeather, 1,
+                            MathUtils.random(1.0f, 1.1f));
+
                     timeJumping = JUMP_TIME_OFFSET_FLYING;
                     jumpState = JUMP_STATE.JUMP_RISING;
                 }
